@@ -14,7 +14,7 @@ class downloader(object):
         options.page_load_strategy = 'eager'  # 页面加载策略 normal eager none
         self.driver = webdriver.Chrome(options=options)
         self.server = 'https://www.33yq.org'
-        self.target = 'https://www.33yq.org/read/139956/'  # 'https://www.33yq.org/read/143610/'
+        self.target = 'https://www.33yq.org/read/139329/'  # 'https://www.33yq.org/read/143610/'
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'
         }
@@ -43,7 +43,7 @@ class downloader(object):
     def get_contents(self, target_index):
         try:
             self.driver.get(self.urls[target_index])
-            time.sleep(random.randint(6, 10))  # 设置休息时间
+            time.sleep(random.randint(1, 6))  # 设置休息时间
             html = self.driver.page_source
             div_bf = BeautifulSoup(html, "html5lib")
             texts = div_bf.find_all('div', id='content')
@@ -58,14 +58,7 @@ class downloader(object):
             return conts[0:]
 
         except:
-            self.fail_names.append(self.names[target_index])
-            self.fails.append(self.urls[target_index])
-            self.fail_indexs.append(target_index)
-            print('出错了')
-            print(target_index)
-            print(self.names[target_index])
-            print(self.urls[target_index])
-            return ['   出错了']
+            self.get_contents(self)
 
     def writer(self, name, path, text):
         write_flag = True
@@ -76,8 +69,8 @@ class downloader(object):
 
 
 if __name__ == '__main__':
-    path = 'C:/Users/admin/PycharmProjects/PaChongXiaoShou/33yq/contents/'
-    file_name = '偷偷养只小金乌'
+    path = 'C:/pythonP/PaChongXiaoShou/33yq/contents/'
+    file_name = '情圣结局后我穿越了'
     file_path = path + file_name + '.txt'
     if os.path.exists(file_path):
         print('文件存在，重命名')
@@ -90,40 +83,7 @@ if __name__ == '__main__':
     for i in range(dl.nums):
         cont = dl.get_contents(i)
         contents.append(cont)
-        # dl.writer(dl.names[i], file_path, dl.get_contents(i))
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~下载失败章节和链接~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    print(dl.fail_indexs)
-    print(dl.fail_names)
-    print(dl.fails)
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~正在尝试重新下载~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~正在尝试重新下载~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~正在尝试重新下载~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    old_fail_indexs = dl.fail_indexs.copy()
-    rt_fail_indexs = []
-    rt_fail_names = []
-    rt_fail_urls = []
-    for i in old_fail_indexs:
-        cont = dl.get_contents(i)
-        if cont == ['   出错了'] or cont[0] == '   出错了':
-            rt_fail_indexs.append(i)
-            rt_fail_names.append(dl.names[i])
-            rt_fail_urls.append(dl.urls[i])
-        contents[i] = cont.copy()
 
     for i in range(len(contents)):
         dl.writer(dl.names[i], file_path, contents[i])
-
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~再次下载失败章节和链接~~~~~~~~~~~~~~~~~~~~')
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    print(rt_fail_indexs)
-    print(rt_fail_names)
-    print(rt_fail_urls)
-    print('~~~~~~~~~~~~~~~~~~~~~~~下载完成~~~~~~~~~~~~~~~~~~~~~~~')
-
-
 
