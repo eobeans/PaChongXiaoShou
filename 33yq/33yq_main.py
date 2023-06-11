@@ -24,6 +24,7 @@ class downloader(object):
         self.fails = []
         self.fail_names = []
         self.fail_indexs = []
+        self.rty_times = 0
 
     def get_download_url(self):
         self.driver.get(self.target)
@@ -55,9 +56,15 @@ class downloader(object):
                 conts[i] = conts[i].replace('<p>', '')  # 去掉<p>
                 conts[i] = conts[i].replace('</p>', '\n')  # 去掉</p>
 
+            self.rty_times = 0
             return conts[0:]
 
         except:
+            self.rty_times += 1
+            if self.rty_times > 5:
+                err = '多次重复失败：', self.urls[target_index]
+                print(err)
+                return err
             self.get_contents(self)
 
     def writer(self, name, path, text):
